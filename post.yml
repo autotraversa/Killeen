@@ -3,4 +3,4 @@
   tasks:
     - name: config soufce from jinja2
       ios_config:
-        src: "/var/lib/awx/projects//config/{{inventory_hostname}}.txt"
+        src: "/var/lib/awx/projects/_72__killeen/config/{{inventory_hostname}}.txt"

@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+    - name: config soufce from jinja2
+      ios_config:
+        src: "/var/lib/awx/projects/_72__killeen/config/Layer2.txt"

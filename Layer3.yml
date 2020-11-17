@@ -1,0 +1,6 @@
+---
+- hosts: PershingPark-9300-MDF-2
+  tasks:
+    - name: config soufce from jinja2
+      ios_config:
+        src: "/var/lib/awx/projects/_72__killeen/config/Layer3.txt"
