@@ -1,0 +1,100 @@
+Layer 3
+-------
+interface Vlan2
+description MDF-A Data
+ip address 10.142.2.1 255.255.255.0
+ip helper-address 10.200.3.8
+ip helper-address 10.110.5.25
+ip helper-address 10.200.4.44
+ip helper-address 10.100.4.125
+ip helper-address 10.100.4.127
+ip helper-address 10.200.4.127
+ip pim sparse-mode
+!
+interface Vlan9
+description Voice
+ip address 10.142.9.1 255.255.255.0
+ip helper-address 10.200.3.8
+ip helper-address 10.100.4.125
+ip helper-address 10.100.4.127
+ip helper-address 10.200.4.127
+!
+interface Vlan10
+description IDF1-A Data
+ip address 10.142.10.1 255.255.255.0
+ip helper-address 10.200.3.8
+ip helper-address 10.110.5.25
+ip helper-address 10.200.4.44
+ip helper-address 10.100.4.125
+ip helper-address 10.100.4.127
+ip helper-address 10.200.4.127
+ip pim sparse-mode
+!
+interface Vlan20
+description IDF2-A Data
+ip address 10.142.20.1 255.255.255.0
+ip helper-address 10.200.3.8
+ip helper-address 10.110.5.25
+ip helper-address 10.200.4.44
+ip helper-address 10.100.4.125
+ip helper-address 10.100.4.127
+ip helper-address 10.200.4.127
+ip pim sparse-mode
+!
+interface Vlan30
+description IDF3-A Data
+ip address 10.142.30.1 255.255.255.0
+ip helper-address 10.200.3.8
+ip helper-address 10.110.5.25
+ip helper-address 10.200.4.44
+ip helper-address 10.100.4.125
+ip helper-address 10.100.4.127
+ip helper-address 10.200.4.127
+ip pim sparse-mode
+!
+interface Vlan31
+description IDF3-B Data
+ip address 10.142.31.1 255.255.255.0
+ip helper-address 10.200.3.8
+ip helper-address 10.110.5.25
+ip helper-address 10.200.4.44
+ip helper-address 10.100.4.125
+ip helper-address 10.100.4.127
+ip helper-address 10.200.4.127
+ip pim sparse-mode
+!
+interface Vlan54
+description Wireless
+ip address 10.142.54.1 255.255.255.0
+ip helper-address 10.200.3.8
+ip helper-address 10.100.4.125
+ip helper-address 10.100.4.127
+ip helper-address 10.200.4.127
+!
+interface Vlan244
+description Fac-Mon-Systems
+ip address 10.142.244.1 255.255.255.0
+!
+interface Vlan245
+description AV
+ip address 10.142.245.1 255.255.255.0
+ip pim sparse-mode
+!
+interface Vlan247
+description Intercom
+ip address 10.142.247.1 255.255.255.0
+ip pim sparse-mode
+!
+interface Vlan249
+description CCTV
+ip address 10.142.249.1 255.255.255.0
+!
+interface Vlan250
+description Management VLAN
+ip address 10.142.250.1 255.255.255.0
+!
+interface Vlan251
+description UPS
+ip address 10.142.251.1 255.255.255.0
+!
+

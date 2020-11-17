@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+    - name: config soufce from jinja2
+      ios_config:
+        src: "/var/lib/awx/projects//config/{{inventory_hostname}}.txt"

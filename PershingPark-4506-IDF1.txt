@@ -1,0 +1,693 @@
+
+
++++++++++++++++++we need vlan 2 script++++++++++++++++++++++++
+!
+no service pad
+service timestamps debug datetime msec localtime show-timezone
+service timestamps log datetime msec localtime show-timezone year
+service password-encryption
+service compress-config
+!
+hostname "PershingPark-4506-IDF1"
+!
+no logging console
+!
+username kisdadmin privilege 15 secret kisdadmin
+!
+!
+aaa new-model
+!
+!
+aaa group server tacacs+ default
+!
+aaa authentication login default group tacacs+ local
+aaa authorization console
+aaa authorization config-commands
+aaa authorization exec default group tacacs+ local 
+aaa authorization commands 15 default group tacacs+ local 
+aaa accounting exec default start-stop group tacacs+
+aaa accounting commands 15 default start-stop group tacacs+
+aaa accounting connection default start-stop group tacacs+
+aaa accounting system default start-stop group tacacs+
+aaa session-id common
+!
+!
+!
+clock timezone Central -6 0
+clock summer-time Central recurring
+!
+!
+!
+!
+
+no ip domain lookup
+ip domain name killeenisd.org
+!
+!
+vtp mode transparent
+vtp domain pershingpark
+vtp password pershingpark
+!
+power redundancy-mode redundant N+N
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+!
+!
+interface Vlan250
+ip address 10.142.250.10 255.255.255.0
+no sh
+exit
+!
+ip route 0.0.0.0 0.0.0.0 10.142.250.1
+ip forward-protocol nd
+no ip http server
+no ip http secure-server
+ip tacacs source-interface Vlan250
+ip ssh time-out 30
+ip ssh version 2
+!
+!
+!
+!
+crypto key generate rsa modulus 1024
+!
+!
+!
+!
+logging facility local0
+logging source-interface Vlan250
+logging host 10.200.3.254
+logging host 10.100.70.40
+access-list 88 permit 10.100.70.40
+access-list 88 permit 10.200.3.254
+!
+!
+snmp-server user KISD NMS v3 auth sha 4trdPza6pV priv aes 128 abA89pFjpeping
+snmp-server group NMS v3 priv read adminview write adminview access 88
+snmp-server group NMS v3 auth context vlan- match prefix access 88
+snmp-server group KISDNMS v3 priv
+snmp-server group default v3 priv
+snmp-server view adminview internet included
+snmp-server view adminview ipAddrEntry excluded
+snmp-server system-shutdown
+snmp-server enable traps snmp authentication coldstart
+snmp-server host 10.200.3.254 version 3 priv KISD
+tacacs-server directed-request
+tacacs server HHDC-ISE
+address ipv4 10.100.7.43
+key SxsE56d4zUkEjt5u
+tacacs server KDC-ISE
+address ipv4 10.200.7.43
+key SxsE56d4zUkEjt5u
+!
+!
+banner login ^C
+*******************************************************************************
+             ********************** NOTICE ************************
+This is a Killeen Independent School District Computer system. Evidence of
+ unauthorized use may be used for criminal prosecution by KISD, its legal
+                     counsel and law enforcement agencies.
+*******************************************************************************
+*******************************************************************************
+**********************Access is Denied Unless Authorized***********************
+*******************************************************************************
+^C
+!
+line con 0
+exec-timeout 5 0
+timeout login response 300
+logging synchronous
+stopbits 1
+line vty 0 4
+exec-timeout 9 0
+logging synchronous
+transport input ssh
+transport output ssh
+line vty 5 15
+logging synchronous
+transport input none
+transport output none
+!
+ntp authentication-key 2 md5 celknlin12
+ntp authenticate
+ntp trusted-key 2
+ntp server 10.105.250.1 key 2
+mac address-table aging-time 14500
+!
+!
+ip access-list extended prm-APIC_QOS_IN#VOICE__acl
+remark updated 10-18-2017
+permit ip 10.142.9.0 0.0.0.255 any dscp ef
+ip access-list extended prm-APIC_QOS_IN#BROADCAST__acl
+remark dmp
+permit tcp any any eq 7777
+ip access-list extended prm-APIC_QOS_IN#MM_CONF__acl
+remark cisco-spark-media
+permit udp any any eq 33434
+permit ip 10.142.9.0 0.0.0.255 any dscp af41
+ip access-list extended prm-APIC_QOS_IN#MM_STREAM__acl
+remark vmware-vmotion
+permit tcp any any eq 8000
+remark apple-remote-desktop
+permit tcp any any eq 3283
+permit tcp any any eq 5800
+permit tcp any any eq 5900
+permit tcp any any eq 5901
+permit udp any any eq 3283
+permit udp any any eq 5800
+permit udp any any eq 5900
+permit udp any any eq 5901
+remark citrix-static
+permit tcp any any eq 1604
+permit tcp any any eq 2512
+permit tcp any any eq 2513
+permit udp any any eq 1604
+permit udp any any eq 2512
+permit udp any any eq 2513
+remark timbuktu
+permit tcp any any eq 407
+permit udp any any eq 407
+remark radmin-port
+permit tcp any any eq 4899
+permit udp any any eq 4899
+remark citrix
+permit tcp any any eq 1494
+permit tcp any any eq 2598
+remark xwindows
+permit tcp any any eq 6000
+permit tcp any any eq 6001
+permit tcp any any eq 6002
+permit tcp any any eq 6003
+remark ms-wbt
+permit tcp any any eq 3389
+remark pcoip
+permit tcp any any eq 4172
+permit udp any any eq 4172
+!
+ip access-list extended prm-APIC_QOS_IN#SIGNALING__acl
+remark h323
+permit tcp any any eq 1300
+permit tcp any any eq 1718
+permit tcp any any eq 1719
+permit tcp any any eq 1720
+permit tcp any any eq 11720
+permit udp any any eq 1300
+permit udp any any eq 1718
+permit udp any any eq 1719
+permit udp any any eq 1720
+permit udp any any eq 11720
+remark rpc2portmap
+permit tcp any any eq 369
+permit udp any any eq 369
+remark mgcp
+permit tcp any any eq 2427
+permit tcp any any eq 2428
+permit tcp any any eq 2727
+permit udp any any eq 2427
+permit udp any any eq 2727
+remark datex-asn
+permit tcp any any eq 355
+permit udp any any eq 355
+remark prm-sm
+permit tcp any any eq 408
+permit udp any any eq 408
+remark ss7ns
+permit tcp any any eq 477
+permit udp any any eq 477
+remark dnp
+permit tcp any any eq 19999
+permit tcp any any eq 20000
+permit udp any any eq 19999
+permit udp any any eq 20000
+remark rtsps
+permit tcp any any eq 322
+permit udp any any eq 322
+remark sflow
+permit tcp any any eq 6343
+permit udp any any eq 6343
+remark tpip
+permit tcp any any eq 594
+permit udp any any eq 594
+remark svrloc
+permit tcp any any eq 427
+permit udp any any eq 427
+remark netvmg-traceroute
+permit udp any any eq 33435
+remark sgcp
+permit tcp any any eq 440
+permit udp any any eq 440
+remark rsvp_tunnel
+permit tcp any any eq 363
+permit udp any any eq 363
+remark snpp
+permit tcp any any eq 444
+permit udp any any eq 444
+remark prm-nm
+permit tcp any any eq 409
+permit udp any any eq 409
+remark skinny
+permit tcp any any eq 2000
+permit tcp any any eq 2001
+permit tcp any any eq 2002
+remark sip-tls
+permit tcp any any eq 5061
+permit udp any any eq 5061
+remark spsc
+permit tcp any any eq 478
+permit udp any any eq 478
+remark sip
+permit tcp any any eq 3478
+permit tcp any any eq 5060
+permit udp any any eq 3478
+permit udp any any eq 5060
+remark capwap-control
+permit udp any any eq 5246
+!
+ip access-list extended prm-APIC_QOS_IN#OAM__acl
+remark kerberos
+permit tcp any any eq 88
+permit udp any any eq 88
+remark exec
+permit tcp any any eq exec
+remark tacacs
+permit tcp any any eq tacacs
+permit tcp any any eq 65
+permit udp any any eq tacacs
+permit udp any any eq 65
+remark dhcp-failover2
+permit tcp any any eq 847
+permit udp any any eq 847
+remark dhcp-failover
+permit tcp any any eq 647
+permit udp any any eq 647
+remark tftp
+permit udp any any eq tftp
+remark login
+permit tcp any any eq login
+remark nsiiops
+permit tcp any any eq 261
+permit udp any any eq 261
+remark secure-ldap
+permit tcp any any eq 636
+permit udp any any eq 636
+remark ssh
+permit tcp any any eq 22
+remark radius
+permit udp any any eq 1812
+permit udp any any eq 1813
+remark dhcpv6-client
+permit tcp any any eq 546
+permit udp any any eq 546
+remark netbios-ssn
+permit udp any any eq netbios-ss
+remark ntp
+permit udp any any eq ntp
+remark snmp
+permit tcp any any eq 161
+permit tcp any any eq 162
+permit tcp any any eq 1161
+permit tcp any any eq 1162
+permit udp any any eq snmp
+permit udp any any eq snmptrap
+remark telnet
+permit tcp any any eq telnet
+remark cisco-rtmt
+permit tcp any any eq 1090
+remark dns
+permit tcp any any eq domain
+permit tcp any any eq 5353
+permit udp any any eq domain
+permit udp any any eq 5353
+remark netbios-ns
+permit tcp any any eq 137
+permit udp any any eq netbios-ns
+remark dhcpv6-server
+permit tcp any any eq 547
+permit udp any any eq 547
+remark msft-gc-ssl
+permit tcp any any eq 3269
+permit udp any any eq 3269
+remark netbios-dgm
+permit tcp any any eq 138
+permit udp any any eq netbios-dgm
+remark active-directory
+permit tcp any any eq 135
+permit tcp any any eq 139
+permit tcp any any eq 389
+permit tcp any any eq 445
+permit udp any any eq 389
+remark shell
+permit tcp any any eq cmd
+remark at-nbp
+permit tcp any any eq 202
+permit udp any any eq 202
+remark rsvp-encap-2
+permit tcp any any eq 1699
+permit udp any any eq 1699
+remark rsvp-encap-1
+permit tcp any any eq 1698
+permit udp any any eq 1698
+remark syslog
+permit udp any any eq syslog
+remark finger
+permit tcp any any eq finger
+permit udp any any eq 79
+remark echo
+permit tcp any any eq echo
+permit udp any any eq echo
+remark msft-gc
+permit tcp any any eq 3268
+permit udp any any eq 3268
+remark entrust-aams
+permit tcp any any eq 681
+permit udp any any eq 681
+!
+ip access-list extended prm-APIC_QOS_IN#TRANS_DATA__acl
+remark oracle-sqlnet
+permit tcp any any eq 66
+remark epmap
+permit udp any any eq 135
+remark iiop
+permit tcp any any eq 535
+permit udp any any eq 535
+remark ddm-dfm
+permit tcp any any eq 447
+permit udp any any eq 447
+remark ddm-ssl
+permit tcp any any eq 448
+permit udp any any eq 448
+remark ibm-db2
+permit tcp any any eq 523
+permit udp any any eq 523
+remark cisco-jabber-im
+permit tcp any any eq 5222
+permit udp any any eq 5222
+remark dbase
+permit tcp any any eq 217
+permit udp any any eq 217
+remark orbix-cfg-ssl
+permit tcp any any eq 3078
+permit udp any any eq 3078
+remark sqlserver
+permit tcp any any eq 1433
+permit udp any any eq 1433
+remark sap
+permit tcp any any eq 3200
+permit tcp any any eq 3300
+permit tcp any any eq 3600
+remark corba-iiop
+permit tcp any any eq 683
+permit udp any any eq 683
+remark orbix-loc-ssl
+permit tcp any any eq 3077
+permit udp any any eq 3077
+remark coauthor
+permit tcp any any eq 1529
+permit udp any any eq 1529
+remark ms-sql-m
+permit tcp any any eq 1434
+permit udp any any eq 1434
+remark webex-app-sharing
+permit udp any any eq 9000
+remark ddm-rdb
+permit tcp any any eq 446
+permit udp any any eq 446
+remark banyan-rpc
+permit tcp any any eq 567
+permit udp any any eq 567
+remark distcc
+permit tcp any any eq 3632
+permit udp any any eq 3632
+remark KISD_TEAMS
+permit tcp any any eq 50001
+permit tcp any any eq 50029
+!
+ip access-list extended prm-APIC_QOS_IN#BULK_DATA__acl
+remark imap
+permit tcp any any eq 143
+permit tcp any any eq 220
+permit udp any any eq 143
+permit udp any any eq 220
+remark secure-pop3
+permit tcp any any eq 995
+permit udp any any eq 995
+remark mail-service
+permit udp any any eq bootps
+permit udp any any eq bootpc
+remark lotus-notes
+permit tcp any any eq 1352
+permit udp any any eq 1352
+remark hp-pdl-datastr
+permit tcp any any eq 9100
+permit udp any any eq 9100
+remark secure-smtp
+permit tcp any any eq 465
+permit udp any any eq 465
+remark iscsi
+permit tcp any any eq 860
+permit udp any any eq 860
+permit udp any any eq 3260
+remark smtp
+permit tcp any any eq ftp
+permit tcp any any eq smtp
+permit tcp any any eq 587
+permit tcp any any eq 21000
+permit udp any any eq 25
+remark nfs
+permit tcp any any eq sunrpc
+permit tcp any any eq 371
+permit tcp any any eq 2049
+permit udp any any eq sunrpc
+permit udp any any eq 371
+permit udp any any eq 2049
+remark corba-iiop-ssl
+permit tcp any any eq 684
+permit udp any any eq 684
+remark microsoftds
+permit udp any any eq 445
+remark pop3
+permit tcp any any eq pop3
+remark secure-imap
+permit tcp any any eq 993
+permit udp any any eq 993
+remark ms-sms
+permit tcp any any eq 2701
+permit tcp any any eq 2702
+permit tcp any any eq 2703
+permit tcp any any eq 2704
+remark rsync
+permit tcp any any eq 873
+permit udp any any eq 873
+remark gsiftp
+permit udp any any eq 2811
+remark gridftp
+permit tcp any any eq 2811
+remark afpovertcp
+permit tcp any any eq 548
+permit udp any any eq 548
+remark msexch-routing
+permit tcp any any eq 691
+permit udp any any eq 691
+remark synergy
+permit tcp any any eq 24800
+!
+ip access-list extended prm-APIC_QOS_IN#SCAVENGER__acl
+remark edonkey-static
+permit tcp any any eq 4661
+permit tcp any any eq 4663
+permit tcp any any eq 4664
+permit tcp any any eq 4665
+permit tcp any any eq 4672
+permit tcp any any eq 4673
+permit tcp any any eq 4711
+permit tcp any any eq 5662
+permit tcp any any eq 5773
+permit tcp any any eq 5783
+permit udp any any eq 4661
+permit udp any any eq 4662
+permit udp any any eq 4663
+permit udp any any eq 4664
+permit udp any any eq 4665
+permit udp any any eq 4672
+permit udp any any eq 4673
+permit udp any any eq 4711
+permit udp any any eq 5662
+permit udp any any eq 5773
+permit udp any any eq 5783
+remark bittorrent
+permit tcp any any eq 1080
+permit tcp any any eq 3544
+permit tcp any any eq 6881
+permit tcp any any eq 6882
+permit tcp any any eq 6883
+permit tcp any any eq 6884
+permit tcp any any eq 6885
+permit tcp any any eq 6886
+permit tcp any any eq 6887
+permit tcp any any eq 6888
+permit tcp any any eq 6889
+permit udp any any eq 3544
+permit udp any any eq 3545
+remark nntp
+permit tcp any any eq nntp
+remark yahoo-messenger
+permit tcp any any eq 5050
+permit tcp any any eq 5101
+remark youtube
+permit tcp any any eq 554
+permit tcp any any eq 8554
+remark skype
+permit tcp any any eq 33033
+remark edonkey
+permit tcp any any eq 4662
+remark netshow
+permit tcp any any eq 1755
+remark aol-messenger
+permit tcp any any eq 5190
+remark networking-gnutella
+permit udp any any eq 6346
+permit udp any any eq 6347
+permit udp any any eq 6348
+remark call-of-duty
+permit tcp any any eq 20500
+permit tcp any any eq 20510
+permit tcp any any eq 28960
+permit udp any any eq 20500
+remark blizwow
+permit tcp any any eq 3724
+permit udp any any eq 3724
+remark doom
+permit tcp any any eq 666
+permit udp any any eq 666
+remark irc
+permit tcp any any eq irc
+permit udp any any eq 194
+remark qq-games
+permit udp any any eq 1863
+!
+ip access-list extended prm-APIC_QOS_IN#TUNNELED__acl
+remark capwap-data
+permit udp any any eq 5247
+exit
+!
+class-map match-any prm-APIC_QOS_IN#VOICE
+match access-group name prm-APIC_QOS_IN#VOICE__acl
+class-map match-any prm-APIC_QOS_IN#BROADCAST
+match access-group name prm-APIC_QOS_IN#BROADCAST__acl
+class-map match-any prm-APIC_QOS_IN#REALTIME
+class-map match-any prm-APIC_QOS_IN#MM_CONF
+match access-group name prm-APIC_QOS_IN#MM_CONF__acl
+class-map match-any prm-APIC_QOS_IN#MM_STREAM
+match access-group name prm-APIC_QOS_IN#MM_STREAM__acl
+class-map match-any prm-APIC_QOS_IN#SIGNALING
+match access-group name prm-APIC_QOS_IN#SIGNALING__acl
+class-map match-any prm-APIC_QOS_IN#OAM
+match access-group name prm-APIC_QOS_IN#OAM__acl
+class-map match-any prm-APIC_QOS_IN#TRANS_DATA
+match access-group name prm-APIC_QOS_IN#TRANS_DATA__acl
+class-map match-any prm-APIC_QOS_IN#BULK_DATA
+match access-group name prm-APIC_QOS_IN#BULK_DATA__acl
+class-map match-any prm-APIC_QOS_IN#SCAVENGER
+match access-group name prm-APIC_QOS_IN#SCAVENGER__acl
+class-map match-any prm-APIC_QOS_IN#TUNNELED
+match access-group name prm-APIC_QOS_IN#TUNNELED__acl
+class-map match-any prm-EZQOS_1P7Q1T#REALTIME
+match dscp CS4
+match dscp CS5
+match dscp EF
+class-map match-any prm-EZQOS_1P7Q1T#CONTROL
+match dscp CS6
+match dscp CS7
+match dscp CS2
+match dscp CS3
+class-map match-any prm-EZQOS_1P7Q1T#MM_CONF
+match dscp AF42
+match dscp AF41
+match dscp AF43
+class-map match-any prm-EZQOS_1P7Q1T#MM_STREAM
+match dscp AF31
+match dscp AF33
+match dscp AF32
+class-map match-any prm-EZQOS_1P7Q1T#TRANS_DATA
+match dscp AF22
+match dscp AF21
+match dscp AF23
+class-map match-any prm-EZQOS_1P7Q1T#BULK_DATA
+match dscp AF13
+match dscp AF12
+match dscp AF11
+class-map match-any prm-EZQOS_1P7Q1T#SCAVENGER
+match dscp CS1
+policy-map prm-dscp#APIC_QOS_Q_OUT
+class prm-EZQOS_1P7Q1T#REALTIME
+priority
+exit
+class prm-EZQOS_1P7Q1T#CONTROL
+bandwidth remaining percent 10
+exit
+class prm-EZQOS_1P7Q1T#MM_CONF
+bandwidth remaining percent 15
+exit
+class prm-EZQOS_1P7Q1T#MM_STREAM
+bandwidth remaining percent 15
+exit
+class prm-EZQOS_1P7Q1T#TRANS_DATA
+bandwidth remaining percent 15
+exit
+class prm-EZQOS_1P7Q1T#BULK_DATA
+bandwidth remaining percent 6
+exit
+class prm-EZQOS_1P7Q1T#SCAVENGER
+bandwidth remaining percent 1
+exit
+class class-default
+bandwidth remaining percent 38
+exit
+policy-map prm-APIC_QOS_IN
+class prm-APIC_QOS_IN#VOICE
+set dscp ef
+exit
+class prm-APIC_QOS_IN#BROADCAST
+set dscp cs5
+exit
+class prm-APIC_QOS_IN#REALTIME
+set dscp cs4
+exit
+class prm-APIC_QOS_IN#MM_CONF
+set dscp af41
+exit
+class prm-APIC_QOS_IN#MM_STREAM
+set dscp af31
+exit
+class prm-APIC_QOS_IN#SIGNALING
+set dscp cs3
+exit
+class prm-APIC_QOS_IN#OAM
+set dscp cs2
+exit
+class prm-APIC_QOS_IN#TRANS_DATA
+set dscp af21
+exit
+class prm-APIC_QOS_IN#BULK_DATA
+set dscp af11
+exit
+class prm-APIC_QOS_IN#SCAVENGER
+set dscp cs1
+exit
+class prm-APIC_QOS_IN#TUNNELED
+exit
+class class-default
+set dscp default
+exit
+!
+end
+!
++++++++++++++++++we need port script++++++++++++++++++++++++
++++++++++++++++++ Configure Uplink ++++++++++++++++++++++++
+!
+
+
+
+
+

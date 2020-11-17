@@ -1,0 +1,30 @@
+Layer 2
+--------
+vlan 2
+name MDF-A Data
+vlan 9
+name Voice
+vlan 10
+name IDF1-A Data
+vlan 20
+name IDF2-A Data
+vlan 30
+name IDF3-A Data
+vlan 31
+name IDF3-B Data
+vlan 54
+name Wireless
+vlan 244
+name Fac-Mon-Systems
+vlan 245
+name AV
+vlan 247
+name Intercom
+vlan 249
+name CCTV
+vlan 250
+name Management VLAN
+vlan 251
+name UPS
+
+
